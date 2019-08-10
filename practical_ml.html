@@ -13154,7 +13154,7 @@ div#notebook {
 <p><strong>Note: I used Python, not R</strong></p>
 <p>In this project, I used a Decision Tree classifier into a one-vs-one multiclass classifier. The reason I choosed a Tree-based model is because of the large number of feature in the data. Using a linear model sush as Logistic Regression or Support Vector Machine would have required one-hot encoing which would have increased the dimension even further. We do not have that problem with Tree-Based models, as label encoding works just fine.</p>
 <p>I started simple with a Decision Tree and it turned out to be the best model. I found that random forest overfitted the train set even with a small number of Trees in the forest. Also, I had to drop many features which had more than 50\% missing values, which reduced the dimention from 160 to 60.</p>
-<p>I used 5-fold cross validation to estimate the accuracy on the test set. This gave me a value of 0.53.</p>
+<p>I used 10-fold cross validation to estimate the out-of-sample accuracy on the test set.</p>
 
 </div>
 </div>
@@ -13453,7 +13453,8 @@ weighted avg       0.89      0.88      0.88     19622
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Cross-Validation-Score">Cross-Validation Score<a class="anchor-link" href="#Cross-Validation-Score">&#182;</a></h3>
+<h3 id="Esimating-Out-of-Sample-Error-with-Cross-Validation-Score">Esimating Out-of-Sample Error with Cross-Validation Score<a class="anchor-link" href="#Esimating-Out-of-Sample-Error-with-Cross-Validation-Score">&#182;</a></h3><p>Given the above results, I expect out-of-sample error to be significant. The above model will probably not generalize well to new data because the variance appears to be high. Let's use cross-validation to estimate out of sample error.</p>
+
 </div>
 </div>
 </div>
@@ -13462,7 +13463,7 @@ weighted avg       0.89      0.88      0.88     19622
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">predictor</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">predictor</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">cv</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean Cross-Validation Score: &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
 </pre></div>
 
@@ -13480,7 +13481,7 @@ weighted avg       0.89      0.88      0.88     19622
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Mean Cross-Validation Score:  0.5266768706920635
+<pre>Mean Cross-Validation Score:  0.6595557261538972
 </pre>
 </div>
 </div>
@@ -13577,7 +13578,7 @@ True
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
@@ -13593,13 +13594,172 @@ True
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[12]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>array([&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;E&#39;], dtype=object)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dic</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="s1">&#39;E&#39;</span><span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;prediction&#39;</span><span class="p">:</span> <span class="n">y_test</span><span class="p">,</span> <span class="s1">&#39;classe&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">y_test</span><span class="p">]})</span>
+<span class="n">results</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[15]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>prediction</th>
+      <th>classe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>4</td>
+      <td>E</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>3</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>3</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>1</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>2</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>1</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>4</td>
+      <td>E</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>4</td>
+      <td>E</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>0</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>3</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>1</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>1</td>
+      <td>B</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
